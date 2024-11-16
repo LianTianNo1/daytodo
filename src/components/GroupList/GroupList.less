@@ -1,0 +1,72 @@
+@import '../../styles/variables.less';
+
+.group-list {
+  width: 200px;
+  background: white;
+  border-right: 1px solid @border-color;
+  height: 100%;
+  padding: 16px;
+
+  &-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    .title {
+      font-size: 16px;
+      font-weight: 500;
+      color: @heading-color;
+    }
+
+    .add-group-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px;
+      border: 1px dashed @border-color;
+      border-radius: @border-radius-base;
+      color: @text-color-secondary;
+      width: 100%;
+      .transition-base();
+
+      &:hover {
+        color: @primary-color;
+        border-color: @primary-color;
+        background: fade(@primary-color, 5%);
+      }
+
+      .icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+
+  .group-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .group-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: @border-radius-base;
+    border-left: 3px solid transparent;
+    text-align: left;
+    width: 100%;
+    .transition-base();
+
+    &:hover {
+      background: fade(@primary-color, 5%);
+    }
+
+    .group-name {
+      font-size: 14px;
+      color: @text-color;
+    }
+  }
+}

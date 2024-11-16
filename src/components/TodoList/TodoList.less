@@ -1,0 +1,27 @@
+@import '../../styles/variables.less';
+
+.todo-list {
+  flex: 1;
+  padding: 16px;
+  background: @background-color;
+  height: 100%;
+  overflow-y: auto;
+
+  .task-items {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 0;
+    color: @text-color-secondary;
+
+    .hint {
+      font-size: 12px;
+      margin-top: 8px;
+    }
+  }
+}

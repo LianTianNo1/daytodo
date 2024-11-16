@@ -1,0 +1,186 @@
+@import '../../styles/variables.less';
+
+.task-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: @border-radius-lg;
+  margin: 8px 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  &.completed {
+    opacity: 0.7;
+    .title {
+      text-decoration: line-through;
+      color: @text-color-secondary;
+    }
+  }
+
+  .task-content {
+    flex: 1;
+    margin-right: 20px;
+  }
+
+  .task-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .priority-wrapper {
+    position: relative;
+
+    .priority-selector {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: @border-radius-base;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+    }
+
+    .priority-tag {
+      font-weight: 600;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 4px;
+
+      &.p0 {
+        background: fade(@error-color, 15%);
+        color: @error-color;
+      }
+      &.p1 {
+        background: fade(@warning-color, 15%);
+        color: @warning-color;
+      }
+      &.p2 {
+        background: fade(@primary-color, 15%);
+        color: @primary-color;
+      }
+      &.p3 {
+        background: fade(@success-color, 15%);
+        color: @success-color;
+      }
+      &.p4 {
+        background: fade(@text-color-secondary, 15%);
+        color: @text-color-secondary;
+      }
+    }
+
+    .priority-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 4px;
+      background: white;
+      border-radius: @border-radius-base;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      min-width: 100px;
+      overflow: hidden;
+
+      .priority-option {
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.05);
+        }
+
+        &.p0 { color: @error-color; }
+        &.p1 { color: @warning-color; }
+        &.p2 { color: @primary-color; }
+        &.p3 { color: @success-color; }
+        &.p4 { color: @text-color-secondary; }
+      }
+    }
+  }
+
+  .title-wrapper {
+    flex: 1;
+  }
+
+  .title {
+    font-weight: 500;
+    color: @heading-color;
+    font-size: 15px;
+  }
+
+  .title-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: @border-radius-base;
+    border: 1px solid @border-color;
+
+    &:focus {
+      border-color: @primary-color;
+      box-shadow: 0 0 0 2px fade(@primary-color, 20%);
+    }
+  }
+
+  .task-meta {
+    font-size: 12px;
+    color: @text-color-secondary;
+    margin-left: 44px;
+  }
+
+  .task-actions {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.2s;
+
+    .action-btn {
+      padding: 6px;
+      border-radius: @border-radius-base;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: rgba(0, 0, 0, 0.05);
+
+      &.delete {
+        color: @error-color;
+        &:hover {
+          background: fade(@error-color, 15%);
+        }
+      }
+
+      &.complete {
+        color: @success-color;
+        &:hover {
+          background: fade(@success-color, 15%);
+        }
+        &.active {
+          background: @success-color;
+          color: white;
+        }
+      }
+    }
+  }
+
+  &:hover .task-actions {
+    opacity: 1;
+  }
+}

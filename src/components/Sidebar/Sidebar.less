@@ -1,0 +1,24 @@
+@import '../../styles/variables.less';
+
+.sidebar {
+  .flex-center();  // 使用混合器
+  flex-direction: column;
+
+  &-header {
+    margin-bottom: 20px;
+
+    h2 {
+      font-size: @font-size-base * 1.5;
+      color: @primary-color;
+    }
+  }
+
+  &-button {
+    .button();  // 使用预定义的按钮样式
+    margin: 4px 0;
+
+    &:hover {
+      background-color: fade(@primary-color, 10%);
+    }
+  }
+}
