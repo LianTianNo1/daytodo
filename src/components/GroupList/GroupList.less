@@ -29,6 +29,8 @@
       border-radius: @border-radius-base;
       color: @text-color-secondary;
       width: 100%;
+      background: transparent;
+      cursor: pointer;
       .transition-base();
 
       &:hover {
@@ -55,18 +57,66 @@
     align-items: center;
     padding: 8px 12px;
     border-radius: @border-radius-base;
-    border-left: 3px solid transparent;
-    text-align: left;
-    width: 100%;
+    cursor: pointer;
     .transition-base();
+    position: relative;
+    overflow: hidden;
 
     &:hover {
       background: fade(@primary-color, 5%);
     }
 
+    &.active {
+      background: fade(@primary-color, 8%);
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: @primary-color;
+      }
+
+      .group-name {
+        color: @primary-color;
+        font-weight: 500;
+      }
+    }
+
+    .group-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 4px;
+      margin-right: 8px;
+
+      &.all {
+        background: linear-gradient(135deg, @primary-color, @success-color);
+      }
+    }
+
     .group-name {
       font-size: 14px;
       color: @text-color;
+    }
+
+    .edit-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      color: @text-color;
+      padding: 4px 8px;
+      margin: -4px -8px;
+      border-radius: @border-radius-base;
+      border: 1px solid fade(@primary-color, 20%);
+
+      &:focus {
+        border-color: @primary-color;
+        box-shadow: 0 0 0 2px fade(@primary-color, 10%);
+      }
     }
   }
 }

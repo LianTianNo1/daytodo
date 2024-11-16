@@ -8,6 +8,7 @@ export const TodoInput: React.FC = () => {
   const [priority, setPriority] = useState('P2');
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
   const addTask = useTaskStore(state => state.addTask);
+  const currentGroupId = useTaskStore(state => state.currentGroupId);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && title.trim()) {
@@ -15,7 +16,7 @@ export const TodoInput: React.FC = () => {
         title: title.trim(),
         priority: priority as 'P0' | 'P1' | 'P2' | 'P3' | 'P4',
         completed: false,
-        groupId: '',
+        groupId: currentGroupId,
       });
       setTitle('');
     }

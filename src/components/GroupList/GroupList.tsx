@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
 import { useGroupStore } from '../../stores/groupStore';
+import { useTaskStore } from '../../stores/taskStore';
 import { PlusCircle } from 'lucide-react';
 import './GroupList.less';
 
 export const GroupList: React.FC = () => {
   const { groups, addGroup, updateGroup } = useGroupStore();
+  const setCurrentGroupId = useTaskStore(state => state.setCurrentGroupId);
+  const currentGroupId = useTaskStore(state => state.currentGroupId);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
 
   const handleAddGroup = () => {
-    addGroup({
+    const newGroup = {
       name: '新分组',
       color: '#' + Math.floor(Math.random()*16777215).toString(16)
-    });
+    };
+    addGroup(newGroup);
   };
 
   const handleDoubleClick = (group: { id: string; name: string }) => {
@@ -27,6 +31,17 @@ export const GroupList: React.FC = () => {
     }
   };
 
+  const handleBlur = (groupId: string) => {
+    if (editName.trim()) {
+      updateGroup(groupId, { name: editName.trim() });
+    }
+    setEditingId(null);
+  };
+
+  const handleGroupClick = (groupId: string) => {
+    setCurrentGroupId(groupId);
+  };
+
   return (
     <div className="group-list">
       <div className="group-list-header">
@@ -38,10 +53,19 @@ export const GroupList: React.FC = () => {
       </div>
 
       <div className="group-items">
+        <div
+          className={`group-item ${!currentGroupId ? 'active' : ''}`}
+          onClick={() => handleGroupClick('')}
+        >
+          <div className="group-color all" />
+          <span className="group-name">全部任务</span>
+        </div>
+
         {groups.map(group => (
           <div
             key={group.id}
-            className="group-item"
+            className={`group-item ${currentGroupId === group.id ? 'active' : ''}`}
+            onClick={() => handleGroupClick(group.id)}
             onDoubleClick={() => handleDoubleClick(group)}
           >
             {editingId === group.id ? (
@@ -50,7 +74,7 @@ export const GroupList: React.FC = () => {
                 value={editName}
                 onChange={e => setEditName(e.target.value)}
                 onKeyPress={e => handleKeyPress(e, group.id)}
-                onBlur={() => setEditingId(null)}
+                onBlur={() => handleBlur(group.id)}
                 autoFocus
                 className="edit-input"
               />

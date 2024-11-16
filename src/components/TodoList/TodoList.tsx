@@ -6,15 +6,20 @@ import './TodoList.less';
 
 export const TodoList: React.FC = () => {
   const tasks = useTaskStore(state => state.tasks);
+  const currentGroupId = useTaskStore(state => state.currentGroupId);
+
+  const filteredTasks = currentGroupId
+    ? tasks.filter(task => task.groupId === currentGroupId)
+    : tasks;
 
   return (
     <div className="todo-list">
       <TodoInput />
       <div className="task-items">
-        {tasks.map(task => (
+        {filteredTasks.map(task => (
           <TaskItem key={task.id} task={task} />
         ))}
-        {tasks.length === 0 && (
+        {filteredTasks.length === 0 && (
           <div className="empty-state">
             <p>暂无待办事项</p>
             <p className="hint">按回车键快速创建新任务</p>

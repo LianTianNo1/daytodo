@@ -29,6 +29,13 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
     }
   };
 
+  const handleTitleBlur = () => {
+    if (editTitle.trim()) {
+      updateTask(task.id, { title: editTitle.trim() });
+    }
+    setIsEditing(false);
+  };
+
   const handlePriorityChange = (newPriority: string) => {
     updateTask(task.id, { priority: newPriority as Task['priority'] });
     setShowPriorityDropdown(false);
@@ -70,7 +77,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
                 value={editTitle}
                 onChange={e => setEditTitle(e.target.value)}
                 onKeyPress={handleTitleKeyPress}
-                onBlur={() => setIsEditing(false)}
+                onBlur={handleTitleBlur}
                 autoFocus
                 className="title-input"
               />

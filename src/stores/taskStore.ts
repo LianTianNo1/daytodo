@@ -3,25 +3,27 @@ import { Task } from '../types/task';
 
 interface TaskState {
   tasks: Task[];
-  addTask: (task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  currentGroupId: string;
+  addTask: (task: Omit<Task, 'id' | 'createdAt'>) => void;
   updateTask: (id: string, task: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   toggleComplete: (id: string) => void;
+  setCurrentGroupId: (groupId: string) => void;
 }
 
 export const useTaskStore = create<TaskState>((set) => ({
   tasks: [],
+  currentGroupId: '',
   addTask: (task) => set((state) => ({
     tasks: [...state.tasks, {
       ...task,
       id: crypto.randomUUID(),
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: new Date().toISOString(),
     }]
   })),
   updateTask: (id, updatedTask) => set((state) => ({
     tasks: state.tasks.map(task =>
-      task.id === id ? { ...task, ...updatedTask, updatedAt: new Date() } : task
+      task.id === id ? { ...task, ...updatedTask } : task
     )
   })),
   deleteTask: (id) => set((state) => ({
@@ -29,7 +31,8 @@ export const useTaskStore = create<TaskState>((set) => ({
   })),
   toggleComplete: (id) => set((state) => ({
     tasks: state.tasks.map(task =>
-      task.id === id ? { ...task, completed: !task.completed, updatedAt: new Date() } : task
+      task.id === id ? { ...task, completed: !task.completed } : task
     )
   })),
+  setCurrentGroupId: (groupId) => set({ currentGroupId: groupId }),
 }));
