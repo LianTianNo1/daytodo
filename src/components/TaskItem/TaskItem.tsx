@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { Task } from '../../types/task';
 import { useTaskStore } from '../../stores/taskStore';
-import { Trash2, Check, ChevronDown } from 'lucide-react';
+import { Trash2, Check, ChevronDown, ArrowUpCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import './TaskItem.less';
 
 interface TaskItemProps {
   task: Task;
+  isInTrash?: boolean;
 }
 
-export const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
+export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
-  const { updateTask, deleteTask, toggleComplete } = useTaskStore();
+  const { updateTask, deleteTask, restoreTask, permanentlyDeleteTask, toggleComplete } = useTaskStore();
 
   const priorities = ['P0', 'P1', 'P2', 'P3', 'P4'];
 
@@ -93,18 +94,39 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task }) => {
       </div>
 
       <div className="task-actions">
-        <button
-          className="action-btn delete"
-          onClick={() => deleteTask(task.id)}
-        >
-          <Trash2 size={16} />
-        </button>
-        <button
-          className={`action-btn complete ${task.completed ? 'active' : ''}`}
-          onClick={() => toggleComplete(task.id)}
-        >
-          <Check size={16} />
-        </button>
+        {isInTrash ? (
+          <>
+            <button
+              className="action-btn restore"
+              onClick={() => restoreTask(task.id)}
+              title="恢复到原分组"
+            >
+              <ArrowUpCircle size={16} />
+            </button>
+            <button
+              className="action-btn delete"
+              onClick={() => permanentlyDeleteTask(task.id)}
+              title="永久删除"
+            >
+              <Trash2 size={16} />
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="action-btn delete"
+              onClick={() => deleteTask(task.id)}
+            >
+              <Trash2 size={16} />
+            </button>
+            <button
+              className={`action-btn complete ${task.completed ? 'active' : ''}`}
+              onClick={() => toggleComplete(task.id)}
+            >
+              <Check size={16} />
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

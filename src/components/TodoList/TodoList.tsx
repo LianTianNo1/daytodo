@@ -2,11 +2,16 @@ import React from 'react';
 import { useTaskStore } from '../../stores/taskStore';
 import { TodoInput } from '../TodoInput/TodoInput';
 import { TaskItem } from '../TaskItem/TaskItem';
+import { TrashView } from '../TrashView/TrashView';
 import './TodoList.less';
 
 export const TodoList: React.FC = () => {
   const tasks = useTaskStore(state => state.tasks);
   const currentGroupId = useTaskStore(state => state.currentGroupId);
+
+  if (currentGroupId === 'trash') {
+    return <TrashView />;
+  }
 
   const filteredTasks = currentGroupId
     ? tasks.filter(task => task.groupId === currentGroupId)

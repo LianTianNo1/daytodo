@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useGroupStore } from '../../stores/groupStore';
 import { useTaskStore } from '../../stores/taskStore';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Trash2 } from 'lucide-react';
 import './GroupList.less';
 
 export const GroupList: React.FC = () => {
@@ -10,6 +10,8 @@ export const GroupList: React.FC = () => {
   const currentGroupId = useTaskStore(state => state.currentGroupId);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
+
+  const trashedTasks = useTaskStore(state => state.trashedTasks);
 
   const handleAddGroup = () => {
     const newGroup = {
@@ -89,6 +91,19 @@ export const GroupList: React.FC = () => {
             )}
           </div>
         ))}
+
+        <div
+          className={`group-item trash ${currentGroupId === 'trash' ? 'active' : ''}`}
+          onClick={() => handleGroupClick('trash')}
+        >
+          <div className="group-color trash">
+            <Trash2 size={12} />
+          </div>
+          <span className="group-name">垃圾桶</span>
+          {trashedTasks.length > 0 && (
+            <span className="trash-count">{trashedTasks.length}</span>
+          )}
+        </div>
       </div>
     </div>
   );

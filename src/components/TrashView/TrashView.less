@@ -1,0 +1,107 @@
+@import '../../styles/variables.less';
+
+.trash-view {
+  flex: 1;
+  padding: 16px;
+  background: @background-color;
+  height: 100%;
+  overflow-y: auto;
+
+  .trash-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+
+    h2 {
+      font-size: 20px;
+      font-weight: 500;
+      color: @heading-color;
+    }
+
+    .empty-trash-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: @border-radius-base;
+      color: @error-color;
+      border: 1px solid fade(@error-color, 20%);
+      background: transparent;
+      cursor: pointer;
+      .transition-base();
+
+      &:hover {
+        background: fade(@error-color, 5%);
+        border-color: @error-color;
+      }
+    }
+  }
+
+  .confirm-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+
+    .confirm-dialog {
+      background: white;
+      border-radius: @border-radius-lg;
+      padding: 24px;
+      width: 400px;
+      box-shadow: @box-shadow-base;
+
+      h3 {
+        font-size: 18px;
+        font-weight: 500;
+        color: @heading-color;
+        margin-bottom: 12px;
+      }
+
+      p {
+        color: @text-color-secondary;
+        margin-bottom: 24px;
+      }
+
+      .dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+
+        button {
+          padding: 8px 16px;
+          border-radius: @border-radius-base;
+          cursor: pointer;
+          .transition-base();
+
+          &.cancel-btn {
+            color: @text-color;
+            background: @background-color;
+            border: 1px solid @border-color;
+
+            &:hover {
+              border-color: @text-color;
+            }
+          }
+
+          &.confirm-btn {
+            color: white;
+            background: @error-color;
+            border: none;
+
+            &:hover {
+              background: fade(@error-color, 85%);
+            }
+          }
+        }
+      }
+    }
+  }
+}
