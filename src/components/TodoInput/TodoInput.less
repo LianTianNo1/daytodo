@@ -1,11 +1,13 @@
 @import '../../styles/variables.less';
 
 .todo-input-container {
+  position: relative;
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   padding: 12px 16px;
   background: white;
-  border-radius: @border-radius-base;
+  border-radius: @border-radius-lg;
   margin: 16px;
   box-shadow: @box-shadow-base;
 
@@ -69,6 +71,90 @@
 
     &::placeholder {
       color: @text-color-secondary;
+    }
+  }
+
+  .tag-selector {
+    position: relative;
+
+    .tag-button {
+      padding: 6px;
+      border-radius: @border-radius-base;
+      border: 1px solid @border-color;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      color: @text-color-secondary;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.02);
+        color: @text-color;
+      }
+    }
+
+    .tag-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 4px;
+      background: white;
+      border-radius: @border-radius-base;
+      box-shadow: @box-shadow-base;
+      min-width: 120px;
+      z-index: 1000;
+
+      .tag-option {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.02);
+        }
+
+        &.selected {
+          background: rgba(0, 0, 0, 0.05);
+        }
+      }
+    }
+  }
+
+  .selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    width: 100%;
+
+    .selected-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+
+      .remove-tag {
+        padding: 2px;
+        border-radius: 50%;
+        border: none;
+        background: transparent;
+        color: currentColor;
+        opacity: 0.5;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 2px;
+
+        &:hover {
+          opacity: 1;
+          background: rgba(0, 0, 0, 0.1);
+        }
+      }
     }
   }
 }

@@ -1,0 +1,247 @@
+@import '../../styles/variables.less';
+
+.tag-manager {
+  padding: 16px;
+  border-top: 1px solid @border-color;
+
+  .tag-header {
+    margin-bottom: 16px;
+
+    .title {
+      font-size: 14px;
+      font-weight: 500;
+      color: @text-color;
+    }
+  }
+
+  .tag-input {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    background: white;
+    padding: 8px;
+    border-radius: @border-radius-lg;
+    box-shadow: @box-shadow-base;
+
+    input {
+      border: none;
+      outline: none;
+      font-size: 14px;
+      padding: 4px 8px;
+      width: 95px;
+
+      &::placeholder {
+        color: @text-color-secondary;
+      }
+    }
+
+    .add-btn {
+      padding: 6px;
+      border-radius: @border-radius-base;
+      border: none;
+      background: @primary-color;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+
+      &:hover {
+        background: darken(@primary-color, 10%);
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+  }
+
+  .tag-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .tag {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: @border-radius-lg;
+      transition: all 0.2s;
+
+      .tag-content {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        flex: 1;
+      }
+
+      &.selected {
+        box-shadow: 0 0 0 2px currentColor;
+      }
+
+      .tag-actions {
+        display: flex;
+        gap: 4px;
+        opacity: 0;
+        transition: opacity 0.2s;
+
+        button {
+          padding: 4px;
+          border-radius: 4px;
+          border: none;
+          background: transparent;
+          color: currentColor;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:hover {
+            background: rgba(0, 0, 0, 0.1);
+          }
+        }
+      }
+
+      &:hover {
+        transform: translateX(4px);
+
+        .tag-actions {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}
+
+.dialog-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  inset: 0;
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dialog-content {
+  background: white;
+  border-radius: @border-radius-lg;
+  box-shadow: @box-shadow-lg;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 320px;
+  padding: 24px;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  .dialog-title {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+
+  .dialog-body {
+    .form-item {
+      margin-bottom: 16px;
+
+      label {
+        display: block;
+        font-size: 14px;
+        color: @text-color-secondary;
+        margin-bottom: 8px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid @border-color;
+        border-radius: @border-radius-base;
+        outline: none;
+        box-sizing: border-box;
+
+        &:focus {
+          border-color: @primary-color;
+        }
+      }
+
+      .color-picker {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        input[type="color"] {
+          width: 40px;
+          height: 40px;
+          padding: 0;
+          border: none;
+          border-radius: @border-radius-base;
+          cursor: pointer;
+        }
+
+        .color-preview {
+          width: 40px;
+          height: 40px;
+          border-radius: @border-radius-base;
+          border: 1px solid @border-color;
+        }
+      }
+    }
+  }
+
+  .dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 24px;
+
+    button {
+      padding: 8px 16px;
+      border-radius: @border-radius-base;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+
+      &.btn-primary {
+        background: @primary-color;
+        color: white;
+
+        &:hover {
+          background: darken(@primary-color, 10%);
+        }
+      }
+
+      &.btn-secondary {
+        background: @border-color;
+        color: @text-color;
+
+        &:hover {
+          background: darken(@border-color, 10%);
+        }
+      }
+    }
+  }
+}
+
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}

@@ -221,3 +221,30 @@
                 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
 }
+
+.task-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+  margin-left: 44px;
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      filter: brightness(0.95);
+    }
+
+    svg {
+      opacity: 0.7;
+    }
+  }
+}

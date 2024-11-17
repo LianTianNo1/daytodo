@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { format } from 'date-fns';
-import { Check, Trash2, Edit2 } from 'lucide-react';
+import { Check, Trash2, Edit2, Tag } from 'lucide-react';
 import { useTaskStore } from '../../stores/taskStore';
 import { PriorityDropdown } from '../PriorityDropdown/PriorityDropdown';
 import { Task } from '../../types/task';
+import { useTagStore } from '../../stores/tagStore';
 import './TaskItem.less';
 
 interface TaskItemProps {
@@ -20,6 +21,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
   const { updateTask, deleteTask, toggleComplete } = useTaskStore();
+  const { tags: allTags } = useTagStore();
 
   const handlePriorityClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -129,6 +131,22 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
         </div>
         <div className="task-meta">
           创建于 {format(new Date(task.createdAt), 'yyyy-MM-dd HH:mm')}
+        </div>
+        <div className="task-tags">
+          {task.tags?.map(tagId => {
+            const tag = allTags.find(t => t.id === tagId);
+            if (!tag) return null;
+            return (
+              <span
+                key={tag.id}
+                className="tag"
+                style={{ backgroundColor: `${tag.color}20`, color: tag.color }}
+              >
+                <Tag size={12} />
+                {tag.name}
+              </span>
+            );
+          })}
         </div>
       </div>
 

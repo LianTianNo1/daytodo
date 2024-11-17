@@ -6,6 +6,7 @@ export interface Task {
   priority: 'high' | 'medium' | 'low';
   completed: boolean;
   groupId: string;
+  tags: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,4 +16,10 @@ export interface Group {
   name: string;
   icon?: string;
   color?: string;
+}
+
+export interface Tag {
+  id: string;
+  name: string;
+  color: string;
 }

@@ -3,6 +3,7 @@ import { useGroupStore } from '../../stores/groupStore';
 import { useTaskStore } from '../../stores/taskStore';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import './GroupList.less';
+import { TagManager } from '../TagManager/TagManager';
 
 export const GroupList: React.FC = () => {
   const { groups, addGroup, updateGroup } = useGroupStore();
@@ -105,6 +106,7 @@ export const GroupList: React.FC = () => {
           )}
         </div>
       </div>
+      <TagManager />
     </div>
   );
 };
