@@ -148,7 +148,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
     >
       <div className="task-content">
         <div className="task-header">
-          <div className="priority-wrapper">
+          <div className={`priority-wrapper  ${task.priority.toLowerCase()}`}>
             <div
               className="priority-selector"
               onClick={handlePriorityClick}

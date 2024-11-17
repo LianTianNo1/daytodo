@@ -39,7 +39,7 @@ export const TodoItem: React.FC<TodoItemProps> = ({ task }) => {
               onBlur={() => setIsEditing(false)}
               autoFocus
               className="edit-input"
-              rows={2}
+              rows={3}
             />
           ) : (
             <>

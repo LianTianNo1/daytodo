@@ -18,36 +18,40 @@ export const TodoList: React.FC = () => {
   };
 
   return (
-    <div className="todo-list">
-      <div className="main-content">
-        {currentGroupId === 'trash' ? (
-          <TrashHeader />
-        ) : (
-          <TodoInput />
-        )}
-        <DndProvider backend={HTML5Backend}>
-          <div className="task-items">
-            {tasks.map((task, index) => (
-              <TaskItem
-                key={task.id}
-                task={task}
-                index={index}
-                moveTask={moveTask}
-                isInTrash={currentGroupId === 'trash'}
-              />
-            ))}
-            {tasks.length === 0 && (
-              <div className="empty-state">
-                <p>{currentGroupId === 'trash' ? '垃圾桶是空的' : '暂无任务'}</p>
-                {currentGroupId !== 'trash' && (
-                  <p className="hint">创建一个新任务试试吧</p>
-                )}
-              </div>
-            )}
-          </div>
-        </DndProvider>
+    <div className="todo-list-container">
+      <div className="todo-main">
+        <div className="todo-content">
+          {currentGroupId === 'trash' ? (
+            <TrashHeader />
+          ) : (
+            <TodoInput />
+          )}
+          <DndProvider backend={HTML5Backend}>
+            <div className="task-items">
+              {tasks.map((task, index) => (
+                <TaskItem
+                  key={task.id}
+                  task={task}
+                  index={index}
+                  moveTask={moveTask}
+                  isInTrash={currentGroupId === 'trash'}
+                />
+              ))}
+              {tasks.length === 0 && (
+                <div className="empty-state">
+                  <p>{currentGroupId === 'trash' ? '垃圾桶是空的' : '暂无任务'}</p>
+                  {currentGroupId !== 'trash' && (
+                    <p className="hint">创建一个新任务试试吧</p>
+                  )}
+                </div>
+              )}
+            </div>
+          </DndProvider>
+        </div>
       </div>
-      <TaskFilter />
+      <div className="todo-filter">
+        <TaskFilter />
+      </div>
     </div>
   );
 };
