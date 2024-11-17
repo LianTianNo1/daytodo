@@ -1,25 +1,29 @@
 import React, { useState } from 'react';
+import { PlusCircle, Trash2, MoreVertical, Edit2 } from 'lucide-react';
 import { useGroupStore } from '../../stores/groupStore';
 import { useTaskStore } from '../../stores/taskStore';
-import { PlusCircle, Trash2 } from 'lucide-react';
-import './GroupList.less';
 import { TagManager } from '../TagManager/TagManager';
+import * as Dropdown from '@radix-ui/react-dropdown-menu';
+import './GroupList.less';
 
 export const GroupList: React.FC = () => {
-  const { groups, addGroup, updateGroup } = useGroupStore();
-  const setCurrentGroupId = useTaskStore(state => state.setCurrentGroupId);
-  const currentGroupId = useTaskStore(state => state.currentGroupId);
+  const { groups, addGroup, updateGroup, deleteGroup } = useGroupStore();
+  const { currentGroupId, setCurrentGroupId, trashedTasks, getTasksByGroupId } = useTaskStore();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
-
-  const trashedTasks = useTaskStore(state => state.trashedTasks);
+  const [showConfirmDelete, setShowConfirmDelete] = useState<string | null>(null);
 
   const handleAddGroup = () => {
     const newGroup = {
+      id: `group-${Date.now()}`,
       name: '新分组',
-      color: '#' + Math.floor(Math.random() * 16777215).toString(16)
+      color: `#${Math.floor(Math.random()*16777215).toString(16)}`,
     };
     addGroup(newGroup);
+  };
+
+  const handleGroupClick = (groupId: string) => {
+    setCurrentGroupId(groupId);
   };
 
   const handleDoubleClick = (group: { id: string; name: string }) => {
@@ -41,8 +45,16 @@ export const GroupList: React.FC = () => {
     setEditingId(null);
   };
 
-  const handleGroupClick = (groupId: string) => {
-    setCurrentGroupId(groupId);
+  const handleDeleteGroup = (groupId: string) => {
+    const tasksInGroup = getTasksByGroupId(groupId);
+    if (tasksInGroup.length > 0) {
+      setShowConfirmDelete(groupId);
+    } else {
+      deleteGroup(groupId);
+      if (currentGroupId === groupId) {
+        setCurrentGroupId('');
+      }
+    }
   };
 
   return (
@@ -82,7 +94,6 @@ export const GroupList: React.FC = () => {
             key={group.id}
             className={`group-item ${currentGroupId === group.id ? 'active' : ''}`}
             onClick={() => handleGroupClick(group.id)}
-            onDoubleClick={() => handleDoubleClick(group)}
           >
             {editingId === group.id ? (
               <input
@@ -101,12 +112,59 @@ export const GroupList: React.FC = () => {
                   style={{ backgroundColor: group.color }}
                 />
                 <span className="group-name">{group.name}</span>
+                <Dropdown.Root>
+                  <Dropdown.Trigger asChild>
+                    <button className="group-actions-trigger" onClick={e => e.stopPropagation()}>
+                      <MoreVertical size={14} />
+                    </button>
+                  </Dropdown.Trigger>
+                  <Dropdown.Portal>
+                    <Dropdown.Content className="group-actions-content" sideOffset={5}>
+                      <Dropdown.Item className="group-action-item" onSelect={() => handleDoubleClick(group)}>
+                        <Edit2 size={14} />
+                        重命名
+                      </Dropdown.Item>
+                      <Dropdown.Item className="group-action-item delete" onSelect={() => handleDeleteGroup(group.id)}>
+                        <Trash2 size={14} />
+                        删除分组
+                      </Dropdown.Item>
+                    </Dropdown.Content>
+                  </Dropdown.Portal>
+                </Dropdown.Root>
               </>
             )}
           </div>
         ))}
-
       </div>
+
+      {showConfirmDelete && (
+        <div className="confirm-dialog-overlay">
+          <div className="confirm-dialog">
+            <h3>确认删除分组？</h3>
+            <p>此分组中还有未完成的任务，删除分组后，这些任务将被移动到默认分组。</p>
+            <div className="dialog-actions">
+              <button
+                className="cancel-btn"
+                onClick={() => setShowConfirmDelete(null)}
+              >
+                取消
+              </button>
+              <button
+                className="confirm-btn"
+                onClick={() => {
+                  deleteGroup(showConfirmDelete);
+                  if (currentGroupId === showConfirmDelete) {
+                    setCurrentGroupId('');
+                  }
+                  setShowConfirmDelete(null);
+                }}
+              >
+                确认删除
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

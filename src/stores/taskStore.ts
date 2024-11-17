@@ -31,6 +31,8 @@ interface TaskState {
   getFilteredTasks: () => Task[];
   setPriorityFilter: (priorities: ('P0' | 'P1' | 'P2' | 'P3' | 'P4')[]) => void;
   setOverdueFilter: (showOverdue: boolean) => void;
+  getTasksByGroupId: (groupId: string) => Task[];
+  moveTasksToDefaultGroup: (groupId: string) => void;
 }
 
 // 修改自定义持久化配置
@@ -235,6 +237,19 @@ export const useTaskStore = create<TaskState>()(
         set(state => ({
           filters: { ...state.filters, showOverdue }
         })),
+      getTasksByGroupId: (groupId: string) => {
+        const { tasks } = get();
+        return tasks.filter(task => task.groupId === groupId);
+      },
+      moveTasksToDefaultGroup: (groupId: string) => {
+        set((state) => ({
+          tasks: state.tasks.map(task =>
+            task.groupId === groupId
+              ? { ...task, groupId: '' }
+              : task
+          )
+        }));
+      },
     }),
     {
       name: 'tasks-storage',
@@ -245,7 +260,7 @@ export const useTaskStore = create<TaskState>()(
         try {
           return JSON.parse(str);
         } catch (e) {
-          console.error('Error parsing state:', e);
+          console.error('Error parsing tasks storage:', e);
           return {};
         }
       },

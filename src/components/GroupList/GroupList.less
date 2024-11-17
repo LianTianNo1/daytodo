@@ -145,3 +145,155 @@
     }
   }
 }
+
+.group-actions-trigger {
+  opacity: 0;
+  border: none;
+  background: transparent;
+  padding: 4px;
+  border-radius: 4px;
+  color: @text-color-secondary;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-left: auto;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: @text-color;
+  }
+}
+
+.group-item:hover .group-actions-trigger {
+  opacity: 1;
+}
+
+.group-actions-content {
+  min-width: 120px;
+  background: white;
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.2s ease-out;
+}
+
+.group-action-item {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  color: @text-color;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  &.delete {
+    color: #ff4d4f;
+
+    &:hover {
+      background: rgba(255, 77, 79, 0.1);
+    }
+  }
+}
+
+.confirm-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.confirm-dialog {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  width: 400px;
+  max-width: 90vw;
+  animation: scaleIn 0.2s ease-out;
+
+  h3 {
+    margin: 0 0 16px;
+    color: #ff4d4f;
+    font-size: 18px;
+  }
+
+  p {
+    margin: 0 0 24px;
+    color: @text-color-secondary;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    button {
+      padding: 8px 24px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
+
+      &.cancel-btn {
+        background: #f0f0f0;
+        color: @text-color;
+
+        &:hover {
+          background: #d9d9d9;
+        }
+      }
+
+      &.confirm-btn {
+        background: #ff4d4f;
+        color: white;
+
+        &:hover {
+          background: #ff7875;
+        }
+      }
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

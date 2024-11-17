@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { storage } from '../services/storage';
 import { Group } from '../types/group';
+import { useTaskStore } from './taskStore';
 
 interface GroupState {
   groups: Group[];
@@ -51,9 +52,14 @@ export const useGroupStore = create<GroupState>()(
           group.id === id ? { ...group, ...updatedGroup } : group
         )
       })),
-      deleteGroup: (id) => set((state: GroupState) => ({
-        groups: state.groups.filter(group => group.id !== id)
-      })),
+      deleteGroup: (id) => {
+        // 先移动该分组下的任务到默认分组
+        useTaskStore.getState().moveTasksToDefaultGroup(id);
+        // 然后删除分组
+        set((state: GroupState) => ({
+          groups: state.groups.filter(group => group.id !== id)
+        }));
+      },
     }),
     {
       name: 'groups-storage',
