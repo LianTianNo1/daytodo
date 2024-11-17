@@ -23,6 +23,7 @@
     "@shadcn/ui": "^0.0.4",
     "@tauri-apps/api": "^2.0.0-alpha.11",
     "@tauri-apps/plugin-shell": "^2.0.0-alpha.3",
+    "@tauri-apps/plugin-sql": "^2.0.1",
     "antd": "^5.22.1",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.0",

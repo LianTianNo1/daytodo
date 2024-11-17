@@ -1,3 +1,7 @@
+import Database from '@tauri-apps/plugin-sql';
+import { appDataDir } from '@tauri-apps/api/path';
+import { join } from '@tauri-apps/api/path';
+
 export interface StorageService {
   get: (key: string) => Promise<string | null>;
   set: (key: string, value: string) => Promise<void>;
@@ -16,6 +20,7 @@ class WebStorage implements StorageService {
         localStorage.setItem(key, '{}');
         console.error('WebStorage get error:', error);
       }
+      console.log('看看-WebStorage get jsonValue:', jsonValue);
       return jsonValue;
     } catch (error) {
       console.error('WebStorage get error:', error);
@@ -42,63 +47,72 @@ class WebStorage implements StorageService {
   }
 }
 
-// Tauri 环境实现
-class TauriStorage implements StorageService {
-  private getFilePath(key: string) {
-    return `data/${key}.json`;
+// Tauri SQLite 实现
+class TauriSQLiteStorage implements StorageService {
+  private db: Database | null = null;
+
+  private async initDB() {
+    if (!this.db) {
+      // const appDataDirPath = await appDataDir();
+      // const dbPath = await join(appDataDirPath, 'daytodo.db');
+      // console.log('看看-TauriSQLiteStorage dbPath:', dbPath);
+      // this.db = await Database.load(`sqlite:${dbPath}`);
+      this.db = await Database.load('sqlite:storage.db');
+      await this.db.execute(`
+        CREATE TABLE IF NOT EXISTS storage (
+          key TEXT PRIMARY KEY,
+          value TEXT NOT NULL
+        )
+      `);
+    }
+    return this.db;
   }
 
   async get(key: string) {
-    if (window.__TAURI__) {
+    try {
+      const db = await this.initDB();
+      const result = await db.select('SELECT value FROM storage WHERE key = ?', [key]);
+      const strValue = result?.length > 0 ? result?.[0]?.value : "{}";
+      let jsonValue = null;
       try {
-        const { invoke } = window.__TAURI__;
-        const content = await invoke('plugin:fs:read_file', {
-          path: this.getFilePath(key)
-        });
-        return content as string;
+        jsonValue = JSON.parse(strValue);
       } catch (error) {
-        console.error('TauriStorage get error:', error);
-        return null;
+        console.error('TauriSQLiteStorage get error:', error);
       }
+      console.log('看看-TauriSQLiteStorage get result:', result);
+      console.log('看看-TauriSQLiteStorage get jsonValue:', jsonValue);
+      return jsonValue;
+    } catch (error) {
+      console.error('TauriSQLiteStorage get error:', error);
+      return null;
     }
-    return null;
   }
 
   async set(key: string, value: string) {
-    if (window.__TAURI__) {
-      try {
-        const { invoke } = window.__TAURI__;
-        // 确保目录存在
-        await invoke('plugin:fs:create_dir', {
-          path: 'data',
-          recursive: true
-        });
-        await invoke('plugin:fs:write_file', {
-          path: this.getFilePath(key),
-          contents: value
-        });
-      } catch (error) {
-        console.error('TauriStorage set error:', error);
-      }
+    try {
+      const db = await this.initDB();
+      console.log('看看-TauriSQLiteStorage set value:', value);
+      await db.execute(
+        'INSERT OR REPLACE INTO storage (key, value) VALUES (?, ?)',
+        [key, value]
+      );
+    } catch (error) {
+      console.error('TauriSQLiteStorage set error:', error);
     }
   }
 
   async remove(key: string) {
-    if (window.__TAURI__) {
-      try {
-        const { invoke } = window.__TAURI__;
-        await invoke('plugin:fs:remove_file', {
-          path: this.getFilePath(key)
-        });
-      } catch (error) {
-        console.error('TauriStorage remove error:', error);
-      }
+    try {
+      const db = await this.initDB();
+      await db.execute('DELETE FROM storage WHERE key = ?', [key]);
+    } catch (error) {
+      console.error('TauriSQLiteStorage remove error:', error);
     }
   }
 }
 
 // 根据环境选择存储实现
 export const storage: StorageService =
-  'window' in globalThis && window.__TAURI__
-    ? new TauriStorage()
+  'window' in globalThis && window.__TAURI_INTERNALS__
+    ? new TauriSQLiteStorage()
     : new WebStorage();

@@ -51,6 +51,13 @@
         "allow": ["$APP/*"],
         "deny": []
       }
+    },
+    "sql": {
+      "enabled": true,
+      "sqlite": {
+        "path": "daytodo.db",
+        "schema": "sql/schema.sql"
+      }
     }
   }
 }
