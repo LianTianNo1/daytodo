@@ -14,6 +14,7 @@ interface TaskState {
       end?: string;
     };
     priorities: ('P0' | 'P1' | 'P2' | 'P3' | 'P4')[];
+    showOverdue?: boolean;
   };
   addTask: (task: Omit<Task, 'id' | 'createdAt'>) => void;
   updateTask: (id: string, task: Partial<Task>) => void;
@@ -29,6 +30,7 @@ interface TaskState {
   clearFilters: () => void;
   getFilteredTasks: () => Task[];
   setPriorityFilter: (priorities: ('P0' | 'P1' | 'P2' | 'P3' | 'P4')[]) => void;
+  setOverdueFilter: (showOverdue: boolean) => void;
 }
 
 // 修改自定义持久化配置
@@ -67,6 +69,7 @@ export const useTaskStore = create<TaskState>()(
         tags: [],
         dateRange: {},
         priorities: [],
+        showOverdue: false,
       },
       addTask: (task) => set((state) => ({
         tasks: [...state.tasks, {
@@ -160,6 +163,7 @@ export const useTaskStore = create<TaskState>()(
             tags: [],
             dateRange: {},
             priorities: [],
+            showOverdue: false,
           }
         })),
       getFilteredTasks: () => {
@@ -211,11 +215,25 @@ export const useTaskStore = create<TaskState>()(
           });
         }
 
+        // 过期任务筛选
+        if (state.filters.showOverdue) {
+          const now = new Date();
+          filteredTasks = filteredTasks.filter(task =>
+            task.dueDate &&
+            new Date(task.dueDate) < now &&
+            !task.completed
+          );
+        }
+
         return filteredTasks;
       },
       setPriorityFilter: (priorities) =>
         set(state => ({
           filters: { ...state.filters, priorities }
+        })),
+      setOverdueFilter: (showOverdue) =>
+        set(state => ({
+          filters: { ...state.filters, showOverdue }
         })),
     }),
     {

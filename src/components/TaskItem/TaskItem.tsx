@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { format } from 'date-fns';
-import { Check, Trash2, Edit2, Tag, Calendar, RotateCcw } from 'lucide-react';
+import { Check, Trash2, Edit2, Tag, Calendar, RotateCcw, Settings, Tag as TagIcon, X } from 'lucide-react';
 import { useTaskStore } from '../../stores/taskStore';
 import { PriorityDropdown } from '../PriorityDropdown/PriorityDropdown';
 import { Task } from '../../types/task';
@@ -10,6 +10,7 @@ import './TaskItem.less';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
 import { useDrag, useDrop } from 'react-dnd';
+import * as Dialog from '@radix-ui/react-dialog';
 
 interface TaskItemProps {
   task: Task;
@@ -26,6 +27,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
   const [editTitle, setEditTitle] = useState(task.title);
   const { updateTask, deleteTask, toggleComplete, restoreTask, permanentlyDeleteTask } = useTaskStore();
   const { tags: allTags } = useTagStore();
+  const [showSettings, setShowSettings] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<string[]>(task.tags || []);
 
   const handlePriorityClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -121,10 +124,20 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
 
   drag(drop(ref));
 
+  const handleTagToggle = (tagId: string) => {
+    const newTags = selectedTags.includes(tagId)
+      ? selectedTags.filter(id => id !== tagId)
+      : [...selectedTags, tagId];
+    setSelectedTags(newTags);
+    updateTask(task.id, { tags: newTags });
+  };
+
+  const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && !task.completed;
+
   return (
     <div
       ref={ref}
-      className={`task-item ${task.completed ? 'completed' : ''} ${isDragging ? 'dragging' : ''}`}
+      className={`task-item ${task.completed ? 'completed' : ''} ${isDragging ? 'dragging' : ''} ${isOverdue ? 'overdue' : ''}`}
       data-index={index}
       data-group-id={task.groupId}
       style={{
@@ -180,8 +193,14 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
         </div>
         <div className="task-meta">
           <span>创建于 {format(new Date(task.createdAt), 'yyyy-MM-dd HH:mm')}</span>
+          {task.startDate && (
+            <span className="start-date">
+              <Calendar size={12} />
+              开始于 {format(new Date(task.startDate), 'yyyy-MM-dd')}
+            </span>
+          )}
           {task.dueDate && (
-            <span className="due-date">
+            <span className={`due-date ${isOverdue ? 'overdue' : ''}`}>
               <Calendar size={12} />
               截止于 {format(new Date(task.dueDate), 'yyyy-MM-dd')}
             </span>
@@ -226,11 +245,18 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
         ) : (
           <>
             <button
-              className="action-btn edit"
-              onClick={startEditing}
-              title="编辑"
+              className="action-btn complete"
+              onClick={() => toggleComplete(task.id)}
+              title={task.completed ? "标记为未完成" : "标记为已完成"}
             >
-              <Edit2 size={16} />
+              <Check size={16} />
+            </button>
+            <button
+              className="action-btn settings"
+              onClick={() => setShowSettings(true)}
+              title="设置"
+            >
+              <Settings size={16} />
             </button>
             <button
               className="action-btn delete"
@@ -239,24 +265,111 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
             >
               <Trash2 size={16} />
             </button>
-            <button
-              className={`action-btn complete ${task.completed ? 'active' : ''}`}
-              onClick={() => toggleComplete(task.id)}
-              title={task.completed ? "标记为未完成" : "标记为已完成"}
-            >
-              <Check size={16} />
-            </button>
-            <DatePicker
-              className="date-picker"
-              value={task.dueDate ? dayjs(task.dueDate) : null}
-              onChange={handleDueDateChange}
-              placeholder="设置截止日期"
-              format="YYYY-MM-DD"
-              allowClear
-            />
           </>
         )}
       </div>
+
+      <Dialog.Root open={showSettings} onOpenChange={setShowSettings}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="dialog-overlay" />
+          <Dialog.Content className="dialog-content">
+            <Dialog.Title>任务设置</Dialog.Title>
+
+            <div className="settings-content">
+              <div className="setting-item">
+                <label>标题</label>
+                <textarea
+                  value={editTitle}
+                  onChange={(e) => setEditTitle(e.target.value)}
+                  onBlur={handleBlur}
+                  className="title-input"
+                  rows={2}
+                />
+              </div>
+
+              <div className="setting-item">
+                <label>优先级</label>
+                <div className="priority-selector" onClick={handlePriorityClick}>
+                  <span className={`priority-tag ${task.priority.toLowerCase()}`}>
+                    {task.priority}
+                  </span>
+                </div>
+              </div>
+
+              <div className="setting-item">
+                <label>开始时间</label>
+                <DatePicker
+                  value={task.startDate ? dayjs(task.startDate) : null}
+                  onChange={(date) => updateTask(task.id, {
+                    startDate: date ? date.toISOString() : undefined
+                  })}
+                  placeholder="设置开始时间"
+                  format="YYYY-MM-DD"
+                  allowClear
+                />
+              </div>
+
+              <div className="setting-item">
+                <label>截止时间</label>
+                <DatePicker
+                  value={task.dueDate ? dayjs(task.dueDate) : null}
+                  onChange={handleDueDateChange}
+                  placeholder="设置截止时间"
+                  format="YYYY-MM-DD"
+                  allowClear
+                />
+              </div>
+
+              <div className="setting-item">
+                <label>标签</label>
+                <div className="tags-selector">
+                  <div className="selected-tags">
+                    {selectedTags.map(tagId => {
+                      const tag = allTags.find(t => t.id === tagId);
+                      if (!tag) return null;
+                      return (
+                        <span
+                          key={tag.id}
+                          className="selected-tag"
+                          style={{ backgroundColor: `${tag.color}20`, color: tag.color }}
+                        >
+                          <TagIcon size={12} />
+                          {tag.name}
+                          <button
+                            className="remove-tag"
+                            onClick={() => handleTagToggle(tag.id)}
+                          >
+                            <X size={12} />
+                          </button>
+                        </span>
+                      );
+                    })}
+                  </div>
+                  <div className="available-tags">
+                    {allTags
+                      .filter(tag => !selectedTags.includes(tag.id))
+                      .map(tag => (
+                        <span
+                          key={tag.id}
+                          className="tag"
+                          style={{ backgroundColor: `${tag.color}20`, color: tag.color }}
+                          onClick={() => handleTagToggle(tag.id)}
+                        >
+                          <TagIcon size={12} />
+                          {tag.name}
+                        </span>
+                      ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <Dialog.Close asChild>
+              <button className="dialog-close">确定</button>
+            </Dialog.Close>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 };

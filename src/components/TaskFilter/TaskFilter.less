@@ -2,13 +2,13 @@
 
 .task-filter {
   position: sticky;
-  top: 88px;
+  top: 0;
   padding: 16px;
   background: white;
-  border-radius: @border-radius-lg;
+  height: fit-content;
+  border-radius: 8px;
   margin: 16px;
-  box-shadow: @box-shadow-base;
-  max-height: calc(100vh - 120px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   overflow-y: auto;
 
   .filter-section {
@@ -152,5 +152,37 @@
 
   .ant-picker-range {
     width: 100%;
+  }
+
+  .quick-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+
+    .filter-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        filter: brightness(0.95);
+      }
+
+      svg {
+        opacity: 0.7;
+      }
+
+      &.active {
+        svg {
+          opacity: 1;
+        }
+      }
+    }
   }
 }

@@ -2,7 +2,6 @@
 
 .task-item {
   position: relative;
-  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -27,6 +26,15 @@
       text-decoration: line-through;
       color: @text-color-secondary;
     }
+  }
+
+  &.overdue {
+    background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.8) 0%,
+      rgba(255, 235, 235, 0.8) 50%,
+      rgba(255, 220, 220, 0.8) 100%
+    );
+    border-color: rgba(255, 200, 200, 0.7);
   }
 
   .task-content {
@@ -154,12 +162,25 @@
       margin-left: 12px;
 
       &.overdue {
-        color: @error-color;
+        color: #ff4d4f;
+        font-weight: 500;
+
+        svg {
+          color: #ff4d4f;
+        }
       }
 
       &.upcoming {
         color: @warning-color;
       }
+    }
+
+    .start-date {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 12px;
+      color: @primary-color;
     }
   }
 
@@ -289,5 +310,172 @@
     &:hover {
       background: rgba(0, 0, 0, 0.05);
     }
+  }
+}
+
+.dialog-overlay {
+  background: rgba(0, 0, 0, 0.4);
+  position: fixed;
+  inset: 0;
+  animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dialog-content {
+  background: white;
+  border-radius: @border-radius-lg;
+  box-shadow: @box-shadow-lg;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 450px;
+  max-height: 85vh;
+  padding: 24px;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  .settings-content {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .setting-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    label {
+      font-weight: 500;
+      color: @text-color;
+    }
+
+    .title-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px 12px;
+      border: 1px solid @border-color-split;
+      border-radius: @border-radius-base;
+      font-size: 14px;
+      line-height: 1.5;
+      resize: none;
+      transition: all 0.2s;
+      background: rgba(0, 0, 0, 0.02);
+      font-family: inherit;
+
+      &:hover {
+        border-color: @primary-color;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: @primary-color;
+        box-shadow: 0 0 0 2px fade(@primary-color, 20%);
+        background: white;
+      }
+    }
+
+    .tags-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      .selected-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        .selected-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-size: 12px;
+          background: rgba(0, 0, 0, 0.05);
+          transition: all 0.2s;
+
+          .remove-tag {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+            margin-left: 4px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-radius: 50%;
+            color: inherit;
+            opacity: 0.7;
+
+            &:hover {
+              opacity: 1;
+              background: rgba(0, 0, 0, 0.1);
+            }
+          }
+        }
+      }
+
+      .available-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 8px;
+        border-top: 1px solid @border-color-split;
+
+        .tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-size: 12px;
+          cursor: pointer;
+          transition: all 0.2s;
+
+          &:hover {
+            filter: brightness(0.95);
+          }
+
+          svg {
+            opacity: 0.7;
+          }
+        }
+      }
+    }
+  }
+
+  .dialog-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    background: @primary-color;
+    color: white;
+    border: none;
+    border-radius: @border-radius-base;
+    cursor: pointer;
+    margin-left: auto;
+
+    &:hover {
+      background: darken(@primary-color, 10%);
+    }
+  }
+}
+
+@keyframes overlayShow {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 }

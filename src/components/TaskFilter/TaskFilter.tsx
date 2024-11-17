@@ -2,7 +2,7 @@ import React from 'react';
 import { DatePicker } from 'antd';
 import { useTaskStore } from '../../stores/taskStore';
 import { useTagStore } from '../../stores/tagStore';
-import { Tag as TagIcon, Calendar, X, AlertCircle } from 'lucide-react';
+import { Tag as TagIcon, Calendar, X, AlertCircle, Clock } from 'lucide-react';
 import dayjs from 'dayjs';
 import './TaskFilter.less';
 
@@ -11,7 +11,7 @@ const { RangePicker } = DatePicker;
 const priorities = ['P0', 'P1', 'P2', 'P3', 'P4'] as const;
 
 export const TaskFilter: React.FC = () => {
-  const { filters, setTagFilter, setDateRangeFilter, setPriorityFilter, clearFilters } = useTaskStore();
+  const { filters, setTagFilter, setDateRangeFilter, setPriorityFilter, setOverdueFilter, clearFilters } = useTaskStore();
   const { tags } = useTagStore();
 
   const handleTagClick = (tagId: string) => {
@@ -42,6 +42,31 @@ export const TaskFilter: React.FC = () => {
 
   return (
     <div className="task-filter">
+      <div className="filter-section">
+        <div className="section-header">
+          <Clock size={16} />
+          <span>快捷筛选</span>
+          {filters.showOverdue && (
+            <button className="clear-btn" onClick={() => setOverdueFilter(false)}>
+              清除
+            </button>
+          )}
+        </div>
+        <div className="quick-filters">
+          <span
+            className={`filter-tag ${filters.showOverdue ? 'active' : ''}`}
+            style={{
+              backgroundColor: filters.showOverdue ? '#ff4d4f' : 'rgba(255, 77, 79, 0.1)',
+              color: filters.showOverdue ? 'white' : '#ff4d4f'
+            }}
+            onClick={() => setOverdueFilter(!filters.showOverdue)}
+          >
+            <Clock size={12} />
+            已过期
+          </span>
+        </div>
+      </div>
+
       <div className="filter-section">
         <div className="section-header">
           <AlertCircle size={16} />
