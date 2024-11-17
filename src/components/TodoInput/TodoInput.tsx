@@ -16,6 +16,7 @@ export const TodoInput: React.FC = () => {
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [dueDate, setDueDate] = useState<string | undefined>();
+  const [startDate, setStartDate] = useState<string | undefined>();
 
   const addTask = useTaskStore(state => state.addTask);
   const currentGroupId = useTaskStore(state => state.currentGroupId);
@@ -31,10 +32,12 @@ export const TodoInput: React.FC = () => {
         completed: false,
         groupId: currentGroupId,
         tags: selectedTags,
-        dueDate: dueDate,
+        startDate,
+        dueDate,
       });
       setTitle('');
       setSelectedTags([]);
+      setStartDate(undefined);
       setDueDate(undefined);
     }
   };
@@ -128,13 +131,22 @@ export const TodoInput: React.FC = () => {
         className="todo-input"
       />
 
-      <DatePicker
-        value={dueDate ? dayjs(dueDate) : null}
-        onChange={(date) => setDueDate(date?.toISOString())}
-        placeholder="设置截止日期"
-        format="YYYY-MM-DD"
-        allowClear
-      />
+      <div className="date-pickers">
+        <DatePicker
+          value={startDate ? dayjs(startDate) : null}
+          onChange={(date) => setStartDate(date?.toISOString())}
+          placeholder="开始日期"
+          format="YYYY-MM-DD"
+          allowClear
+        />
+        <DatePicker
+          value={dueDate ? dayjs(dueDate) : null}
+          onChange={(date) => setDueDate(date?.toISOString())}
+          placeholder="截止日期"
+          format="YYYY-MM-DD"
+          allowClear
+        />
+      </div>
     </div>
   );
 };

@@ -2,17 +2,32 @@
 
 .todo-list {
   flex: 1;
+  display: flex;
+  gap: 16px;
   padding: 16px;
   background: @background-color;
   height: 100%;
-  overflow-y: auto;
+  overflow: hidden;
+
+  .main-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 16px;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+  }
+
+  .task-filter {
+    width: 300px;
+    flex-shrink: 0;
+  }
 
   .task-items {
     margin-top: 16px;
     display: flex;
     flex-direction: column;
     gap: 8px;
-
   }
 
   .empty-state {

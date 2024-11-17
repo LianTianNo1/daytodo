@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { format } from 'date-fns';
 import { Check, Trash2, Edit2, Tag, Calendar, RotateCcw } from 'lucide-react';
@@ -9,6 +9,7 @@ import { useTagStore } from '../../stores/tagStore';
 import './TaskItem.less';
 import { DatePicker } from 'antd';
 import dayjs from 'dayjs';
+import { useDrag, useDrop } from 'react-dnd';
 
 interface TaskItemProps {
   task: Task;
@@ -18,6 +19,7 @@ interface TaskItemProps {
 }
 
 export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, moveTask }) => {
+  const ref = useRef<HTMLDivElement>(null);
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [isEditing, setIsEditing] = useState(false);
@@ -82,13 +84,52 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
     return () => document.removeEventListener('click', handleClickOutside);
   }, [showPriorityDropdown]);
 
+  const [{ isDragging }, drag] = useDrag({
+    type: 'TASK',
+    item: { index, groupId: task.groupId },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+    canDrag: !isInTrash,
+  });
+
+  const [, drop] = useDrop({
+    accept: 'TASK',
+    hover(item: { index: number, groupId: string }, monitor) {
+      if (!ref.current) return;
+
+      const dragIndex = item.index;
+      const hoverIndex = index;
+      const sourceGroupId = item.groupId;
+      const targetGroupId = task.groupId;
+
+      if (dragIndex === hoverIndex && sourceGroupId === targetGroupId) return;
+
+      const hoverBoundingRect = ref.current?.getBoundingClientRect();
+      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const clientOffset = monitor.getClientOffset();
+      const hoverClientY = clientOffset!.y - hoverBoundingRect.top;
+
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
+
+      moveTask(dragIndex, hoverIndex, sourceGroupId, targetGroupId);
+      item.index = hoverIndex;
+      item.groupId = targetGroupId;
+    },
+  });
+
+  drag(drop(ref));
+
   return (
     <div
-      className={`task-item ${task.completed ? 'completed' : ''}`}
+      ref={ref}
+      className={`task-item ${task.completed ? 'completed' : ''} ${isDragging ? 'dragging' : ''}`}
       data-index={index}
       data-group-id={task.groupId}
       style={{
-        cursor: isInTrash ? 'default' : 'pointer',
+        cursor: isInTrash ? 'default' : 'move',
+        opacity: isDragging ? 0.5 : 1,
         userSelect: 'none',
       }}
     >

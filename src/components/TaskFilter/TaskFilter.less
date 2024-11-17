@@ -1,0 +1,156 @@
+@import '../../styles/variables.less';
+
+.task-filter {
+  position: sticky;
+  top: 88px;
+  padding: 16px;
+  background: white;
+  border-radius: @border-radius-lg;
+  margin: 16px;
+  box-shadow: @box-shadow-base;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+
+  .filter-section {
+    margin-bottom: 16px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      color: @text-color;
+
+      .clear-btn {
+        margin-left: auto;
+        padding: 4px 8px;
+        border: none;
+        background: none;
+        color: @text-color-secondary;
+        cursor: pointer;
+        font-size: 12px;
+
+        &:hover {
+          color: @error-color;
+        }
+      }
+    }
+  }
+
+  .priority-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .priority-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+
+      &.p0 {
+        color: @error-color;
+        background: fade(@error-color, 10%);
+        &.active {
+          background: @error-color;
+          color: white;
+        }
+      }
+      &.p1 {
+        color: @warning-color;
+        background: fade(@warning-color, 10%);
+        &.active {
+          background: @warning-color;
+          color: white;
+        }
+      }
+      &.p2 {
+        color: @primary-color;
+        background: fade(@primary-color, 10%);
+        &.active {
+          background: @primary-color;
+          color: white;
+        }
+      }
+      &.p3 {
+        color: @success-color;
+        background: fade(@success-color, 10%);
+        &.active {
+          background: @success-color;
+          color: white;
+        }
+      }
+      &.p4 {
+        color: @text-color-secondary;
+        background: fade(@text-color-secondary, 10%);
+        &.active {
+          background: @text-color-secondary;
+          color: white;
+        }
+      }
+
+      &:hover {
+        filter: brightness(0.95);
+      }
+    }
+  }
+
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .filter-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        filter: brightness(0.95);
+      }
+
+      &.active {
+        svg {
+          color: white;
+        }
+      }
+    }
+  }
+
+  .clear-all-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 16px;
+    padding: 8px 16px;
+    border: 1px solid @border-color;
+    border-radius: @border-radius-base;
+    background: white;
+    color: @text-color;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      color: @error-color;
+      border-color: @error-color;
+      background: fade(@error-color, 5%);
+    }
+  }
+
+  .ant-picker-range {
+    width: 100%;
+  }
+}

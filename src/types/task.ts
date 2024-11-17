@@ -2,13 +2,14 @@ export interface Task {
   id: string;
   title: string;
   description?: string;
+  startDate?: string;
   dueDate?: string;
-  priority: 'high' | 'medium' | 'low';
+  createdAt: string;
+  updatedAt: string;
+  priority: 'P0' | 'P1' | 'P2' | 'P3' | 'P4';
   completed: boolean;
   groupId: string;
   tags: string[];
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface Group {
