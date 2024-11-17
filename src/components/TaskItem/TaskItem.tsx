@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { format } from 'date-fns';
-import { Check, Trash2, Edit2, Tag } from 'lucide-react';
+import { Check, Trash2, Edit2, Tag, Calendar, RotateCcw } from 'lucide-react';
 import { useTaskStore } from '../../stores/taskStore';
 import { PriorityDropdown } from '../PriorityDropdown/PriorityDropdown';
 import { Task } from '../../types/task';
 import { useTagStore } from '../../stores/tagStore';
 import './TaskItem.less';
+import { DatePicker } from 'antd';
+import dayjs from 'dayjs';
 
 interface TaskItemProps {
   task: Task;
@@ -20,7 +22,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
-  const { updateTask, deleteTask, toggleComplete } = useTaskStore();
+  const { updateTask, deleteTask, toggleComplete, restoreTask, permanentlyDeleteTask } = useTaskStore();
   const { tags: allTags } = useTagStore();
 
   const handlePriorityClick = (e: React.MouseEvent) => {
@@ -61,6 +63,12 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
       setIsEditing(true);
       setEditTitle(task.title);
     }
+  };
+
+  const handleDueDateChange = (date: dayjs.Dayjs | null) => {
+    updateTask(task.id, {
+      dueDate: date ? date.toISOString() : undefined
+    });
   };
 
   useEffect(() => {
@@ -130,7 +138,13 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
           </div>
         </div>
         <div className="task-meta">
-          创建于 {format(new Date(task.createdAt), 'yyyy-MM-dd HH:mm')}
+          <span>创建于 {format(new Date(task.createdAt), 'yyyy-MM-dd HH:mm')}</span>
+          {task.dueDate && (
+            <span className="due-date">
+              <Calendar size={12} />
+              截止于 {format(new Date(task.dueDate), 'yyyy-MM-dd')}
+            </span>
+          )}
         </div>
         <div className="task-tags">
           {task.tags?.map(tagId => {
@@ -151,29 +165,56 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
       </div>
 
       <div className="task-actions">
-        {!isInTrash && (
-          <button
-            className="action-btn edit"
-            onClick={startEditing}
-            title="编辑"
-          >
-            <Edit2 size={16} />
-          </button>
+        {isInTrash ? (
+          <>
+            <button
+              className="action-btn restore"
+              onClick={() => restoreTask(task.id)}
+              title="恢复"
+            >
+              <RotateCcw size={16} />
+            </button>
+            <button
+              className="action-btn delete"
+              onClick={() => permanentlyDeleteTask(task.id)}
+              title="永久删除"
+            >
+              <Trash2 size={16} />
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              className="action-btn edit"
+              onClick={startEditing}
+              title="编辑"
+            >
+              <Edit2 size={16} />
+            </button>
+            <button
+              className="action-btn delete"
+              onClick={() => deleteTask(task.id)}
+              title="删除"
+            >
+              <Trash2 size={16} />
+            </button>
+            <button
+              className={`action-btn complete ${task.completed ? 'active' : ''}`}
+              onClick={() => toggleComplete(task.id)}
+              title={task.completed ? "标记为未完成" : "标记为已完成"}
+            >
+              <Check size={16} />
+            </button>
+            <DatePicker
+              className="date-picker"
+              value={task.dueDate ? dayjs(task.dueDate) : null}
+              onChange={handleDueDateChange}
+              placeholder="设置截止日期"
+              format="YYYY-MM-DD"
+              allowClear
+            />
+          </>
         )}
-        <button
-          className="action-btn delete"
-          onClick={() => deleteTask(task.id)}
-          title="删除"
-        >
-          <Trash2 size={16} />
-        </button>
-        <button
-          className={`action-btn complete ${task.completed ? 'active' : ''}`}
-          onClick={() => toggleComplete(task.id)}
-          title={task.completed ? "标记为未完成" : "标记为已完成"}
-        >
-          <Check size={16} />
-        </button>
       </div>
     </div>
   );

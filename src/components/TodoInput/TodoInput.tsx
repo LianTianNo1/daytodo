@@ -2,6 +2,9 @@ import React, { useState, useRef } from 'react';
 import { useTaskStore } from '../../stores/taskStore';
 import { useTagStore } from '../../stores/tagStore';
 import { ChevronDown, Tag as TagIcon, X } from 'lucide-react';
+import { DatePicker } from 'antd';
+import dayjs from 'dayjs';
+import { Calendar } from 'lucide-react';
 import './TodoInput.less';
 
 const priorities = ['P0', 'P1', 'P2', 'P3', 'P4'] as const;
@@ -12,6 +15,7 @@ export const TodoInput: React.FC = () => {
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
   const [showTagDropdown, setShowTagDropdown] = useState(false);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [dueDate, setDueDate] = useState<string | undefined>();
 
   const addTask = useTaskStore(state => state.addTask);
   const currentGroupId = useTaskStore(state => state.currentGroupId);
@@ -27,9 +31,11 @@ export const TodoInput: React.FC = () => {
         completed: false,
         groupId: currentGroupId,
         tags: selectedTags,
+        dueDate: dueDate,
       });
       setTitle('');
       setSelectedTags([]);
+      setDueDate(undefined);
     }
   };
 
@@ -120,6 +126,14 @@ export const TodoInput: React.FC = () => {
         onKeyPress={handleKeyPress}
         placeholder="添加新任务，按回车保存"
         className="todo-input"
+      />
+
+      <DatePicker
+        value={dueDate ? dayjs(dueDate) : null}
+        onChange={(date) => setDueDate(date?.toISOString())}
+        placeholder="设置截止日期"
+        format="YYYY-MM-DD"
+        allowClear
       />
     </div>
   );

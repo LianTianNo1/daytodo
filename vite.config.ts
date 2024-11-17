@@ -11,6 +11,9 @@ export default defineConfig(async () => ({
     preprocessorOptions: {
       less: {
         javascriptEnabled: true,
+        modifyVars: {
+          '@primary-color': '#1890ff',
+        },
         additionalData: '@root-entry-name: default;',
       },
     },
