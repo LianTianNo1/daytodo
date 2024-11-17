@@ -3,16 +3,19 @@
 .task-filter {
   position: sticky;
   top: 0;
-  padding: 16px;
-  background: white;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
   height: fit-content;
-  border-radius: 8px;
   margin: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  overflow-y: auto;
+  box-shadow:
+    0 4px 24px -1px rgba(0, 0, 0, 0.08),
+    0 2px 8px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.7);
 
   .filter-section {
-    margin-bottom: 16px;
+    margin-bottom: 24px;
 
     &:last-child {
       margin-bottom: 0;
@@ -21,21 +24,29 @@
     .section-header {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 16px;
       color: @text-color;
+      font-weight: 500;
+
+      svg {
+        color: @primary-color;
+      }
 
       .clear-btn {
         margin-left: auto;
-        padding: 4px 8px;
+        padding: 4px 12px;
         border: none;
-        background: none;
+        background: rgba(0, 0, 0, 0.03);
         color: @text-color-secondary;
         cursor: pointer;
         font-size: 12px;
+        border-radius: 20px;
+        transition: all 0.2s;
 
         &:hover {
           color: @error-color;
+          background: fade(@error-color, 8%);
         }
       }
     }
@@ -44,87 +55,139 @@
   .priority-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
 
     .priority-tag {
       display: inline-flex;
       align-items: center;
-      padding: 4px 12px;
-      border-radius: 16px;
-      font-size: 12px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
       cursor: pointer;
-      transition: all 0.2s;
-      border: 1px solid transparent;
+      transition: all 0.3s;
+      font-weight: 500;
+
+      &:hover {
+        transform: translateY(-1px);
+      }
 
       &.p0 {
         color: @error-color;
-        background: fade(@error-color, 10%);
+        background: fade(@error-color, 8%);
         &.active {
           background: @error-color;
           color: white;
+          box-shadow: 0 4px 12px fade(@error-color, 30%);
         }
       }
       &.p1 {
         color: @warning-color;
-        background: fade(@warning-color, 10%);
+        background: fade(@warning-color, 8%);
         &.active {
           background: @warning-color;
           color: white;
+          box-shadow: 0 4px 12px fade(@warning-color, 30%);
         }
       }
       &.p2 {
         color: @primary-color;
-        background: fade(@primary-color, 10%);
+        background: fade(@primary-color, 8%);
         &.active {
           background: @primary-color;
           color: white;
+          box-shadow: 0 4px 12px fade(@primary-color, 30%);
         }
       }
       &.p3 {
         color: @success-color;
-        background: fade(@success-color, 10%);
+        background: fade(@success-color, 8%);
         &.active {
           background: @success-color;
           color: white;
+          box-shadow: 0 4px 12px fade(@success-color, 30%);
         }
       }
       &.p4 {
         color: @text-color-secondary;
-        background: fade(@text-color-secondary, 10%);
+        background: fade(@text-color-secondary, 8%);
         &.active {
           background: @text-color-secondary;
           color: white;
+          box-shadow: 0 4px 12px fade(@text-color-secondary, 30%);
         }
       }
+    }
+  }
 
-      &:hover {
-        filter: brightness(0.95);
-      }
+  .quick-filters {
+    .filter-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+      border-radius: 8px;
+      padding: 4px 12px;
     }
   }
 
   .tag-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
 
     .filter-tag {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      padding: 4px 12px;
-      border-radius: 16px;
-      font-size: 12px;
+      gap: 6px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.3s;
+      font-weight: 500;
+      border-radius: 8px;
+      padding: 4px 12px;
 
       &:hover {
-        filter: brightness(0.95);
+        transform: translateY(-1px);
+      }
+
+      svg {
+        transition: all 0.2s;
       }
 
       &.active {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
         svg {
           color: white;
+        }
+      }
+    }
+  }
+
+  .ant-picker-range {
+    width: 100%;
+    border-radius: 12px;
+    padding: 8px 12px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    transition: all 0.3s;
+
+    &:hover {
+      border-color: @primary-color;
+    }
+
+    .ant-picker-input {
+      input {
+        font-size: 13px;
+
+        &::placeholder {
+          color: @text-color-secondary;
         }
       }
     }
@@ -133,56 +196,24 @@
   .clear-all-btn {
     display: flex;
     align-items: center;
-    gap: 4px;
-    margin-top: 16px;
-    padding: 8px 16px;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    margin-top: 24px;
+    padding: 12px;
     border: 1px solid @border-color;
-    border-radius: @border-radius-base;
+    border-radius: 12px;
     background: white;
     color: @text-color;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s;
+    font-weight: 500;
 
     &:hover {
       color: @error-color;
       border-color: @error-color;
       background: fade(@error-color, 5%);
-    }
-  }
-
-  .ant-picker-range {
-    width: 100%;
-  }
-
-  .quick-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 8px;
-
-    .filter-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 4px 12px;
-      border-radius: 12px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-
-      &:hover {
-        filter: brightness(0.95);
-      }
-
-      svg {
-        opacity: 0.7;
-      }
-
-      &.active {
-        svg {
-          opacity: 1;
-        }
-      }
+      transform: translateY(-1px);
     }
   }
 }

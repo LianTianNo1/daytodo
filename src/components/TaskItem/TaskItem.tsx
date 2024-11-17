@@ -196,13 +196,13 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
           {task.startDate && (
             <span className="start-date">
               <Calendar size={12} />
-              开始于 {format(new Date(task.startDate), 'yyyy-MM-dd')}
+              开始于 {format(new Date(task.startDate), 'yyyy-MM-dd HH:mm')}
             </span>
           )}
           {task.dueDate && (
             <span className={`due-date ${isOverdue ? 'overdue' : ''}`}>
               <Calendar size={12} />
-              截止于 {format(new Date(task.dueDate), 'yyyy-MM-dd')}
+              截止于 {format(new Date(task.dueDate), 'yyyy-MM-dd HH:mm')}
             </span>
           )}
         </div>
@@ -304,7 +304,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
                     startDate: date ? date.toISOString() : undefined
                   })}
                   placeholder="设置开始时间"
-                  format="YYYY-MM-DD"
+                  format="YYYY-MM-DD HH:mm"
+                  showTime={{ format: 'HH:mm' }}
                   allowClear
                 />
               </div>
@@ -315,7 +316,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
                   value={task.dueDate ? dayjs(task.dueDate) : null}
                   onChange={handleDueDateChange}
                   placeholder="设置截止时间"
-                  format="YYYY-MM-DD"
+                  format="YYYY-MM-DD HH:mm"
+                  showTime={{ format: 'HH:mm' }}
                   allowClear
                 />
               </div>

@@ -5,23 +5,29 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 16px 20px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  border-radius: @border-radius-lg;
-  margin: 8px 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  padding: 20px 24px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  margin: 0 16px;
+  box-shadow:
+    0 4px 24px -1px rgba(0, 0, 0, 0.06),
+    0 2px 8px -1px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.8);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
     z-index: 2;
     transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    box-shadow:
+      0 12px 28px -5px rgba(0, 0, 0, 0.12),
+      0 4px 12px -2px rgba(0, 0, 0, 0.08);
   }
 
   &.completed {
-    opacity: 0.7;
+    opacity: 0.75;
+    background: rgba(245, 245, 245, 0.9);
+
     .title {
       text-decoration: line-through;
       color: @text-color-secondary;
@@ -30,11 +36,11 @@
 
   &.overdue {
     background: linear-gradient(135deg,
-      rgba(255, 255, 255, 0.8) 0%,
-      rgba(255, 235, 235, 0.8) 50%,
-      rgba(255, 220, 220, 0.8) 100%
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 245, 245, 0.9) 50%,
+      rgba(255, 235, 235, 0.9) 100%
     );
-    border-color: rgba(255, 200, 200, 0.7);
+    border-color: fade(@error-color, 15%);
   }
 
   .task-content {
@@ -188,53 +194,39 @@
     display: flex;
     gap: 8px;
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: all 0.3s;
 
     .action-btn {
-      padding: 6px;
-      border-radius: @border-radius-base;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
       border: none;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.04);
+      color: @text-color-secondary;
       cursor: pointer;
-      transition: all 0.2s;
-      background: rgba(0, 0, 0, 0.05);
+      transition: all 0.3s;
 
-      &.delete {
-        color: @error-color;
-        &:hover {
-          background: fade(@error-color, 15%);
-        }
+      &:hover {
+        background: rgba(0, 0, 0, 0.08);
+        transform: translateY(-1px);
       }
 
-      &.complete {
+      &.complete:hover {
+        background: fade(@success-color, 15%);
         color: @success-color;
-        &:hover {
-          background: fade(@success-color, 15%);
-        }
-        &.active {
-          background: @success-color;
-          color: white;
-        }
       }
 
-      &.edit {
-        color: @primary-color;
-        &:hover {
-          background: fade(@primary-color, 15%);
-        }
+      &.delete:hover {
+        background: fade(@error-color, 15%);
+        color: @error-color;
       }
 
-      &.calendar {
+      &.settings:hover {
+        background: fade(@primary-color, 15%);
         color: @primary-color;
-        &:hover {
-          background: fade(@primary-color, 15%);
-        }
-      }
-
-      &.restore {
-        color: @primary-color;
-        &:hover {
-          background: fade(@primary-color, 15%);
-        }
       }
     }
   }
@@ -321,9 +313,12 @@
 }
 
 .dialog-content {
-  background: white;
-  border-radius: @border-radius-lg;
-  box-shadow: @box-shadow-lg;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  box-shadow:
+    0 20px 48px -8px rgba(0, 0, 0, 0.15),
+    0 8px 16px -4px rgba(0, 0, 0, 0.1);
   position: fixed;
   top: 50%;
   left: 50%;
@@ -331,7 +326,7 @@
   width: 90vw;
   max-width: 450px;
   max-height: 85vh;
-  padding: 24px;
+  padding: 32px;
   animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
 
   .settings-content {

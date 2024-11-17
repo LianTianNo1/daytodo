@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Task } from '../../types/task';
-import { useTaskStore } from '../../stores/taskStore';
-import { Trash2, Check } from 'lucide-react';
 import { format } from 'date-fns';
+import { Check, Trash2, Calendar } from 'lucide-react';
+import { useTaskStore } from '../../stores/taskStore';
 import './TodoItem.less';
 
 interface TodoItemProps {
@@ -26,19 +25,21 @@ export const TodoItem: React.FC<TodoItemProps> = ({ task }) => {
     }
   };
 
+  const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && !task.completed;
+
   return (
-    <div className={`todo-item ${task.completed ? 'completed' : ''}`}>
+    <div className={`todo-item ${task.completed ? 'completed' : ''} ${isOverdue ? 'overdue' : ''}`}>
       <div className="todo-content">
         <div className="todo-header" onDoubleClick={handleDoubleClick}>
           {isEditing ? (
-            <input
-              type="text"
+            <textarea
               value={editTitle}
               onChange={e => setEditTitle(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyPress}
               onBlur={() => setIsEditing(false)}
               autoFocus
               className="edit-input"
+              rows={2}
             />
           ) : (
             <>
@@ -50,21 +51,37 @@ export const TodoItem: React.FC<TodoItemProps> = ({ task }) => {
           )}
         </div>
         <div className="todo-meta">
-          创建于 {format(task.createdAt, 'yyyy-MM-dd HH:mm')}
+          <span className="created-at">
+            创建于 {format(new Date(task.createdAt), 'yyyy-MM-dd HH:mm')}
+          </span>
+          {task.startDate && (
+            <span className="start-date">
+              <Calendar size={12} />
+              开始于 {format(new Date(task.startDate), 'yyyy-MM-dd HH:mm')}
+            </span>
+          )}
+          {task.dueDate && (
+            <span className={`due-date ${isOverdue ? 'overdue' : ''}`}>
+              <Calendar size={12} />
+              截止于 {format(new Date(task.dueDate), 'yyyy-MM-dd HH:mm')}
+            </span>
+          )}
         </div>
       </div>
       <div className="todo-actions">
         <button
-          className="action-btn delete"
-          onClick={() => deleteTask(task.id)}
-        >
-          <Trash2 size={16} />
-        </button>
-        <button
           className={`action-btn complete ${task.completed ? 'active' : ''}`}
           onClick={() => toggleComplete(task.id)}
+          title={task.completed ? "标记为未完成" : "标记为已完成"}
         >
           <Check size={16} />
+        </button>
+        <button
+          className="action-btn delete"
+          onClick={() => deleteTask(task.id)}
+          title="删除"
+        >
+          <Trash2 size={16} />
         </button>
       </div>
     </div>
