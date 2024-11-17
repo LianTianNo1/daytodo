@@ -287,14 +287,14 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash, index, move
                 />
               </div>
 
-              <div className="setting-item">
+              {/* <div className="setting-item">
                 <label>优先级</label>
                 <div className="priority-selector" onClick={handlePriorityClick}>
                   <span className={`priority-tag ${task.priority.toLowerCase()}`}>
                     {task.priority}
                   </span>
                 </div>
-              </div>
+              </div> */}
 
               <div className="setting-item">
                 <label>开始时间</label>
