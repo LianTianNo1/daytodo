@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { Check, Trash2 } from 'lucide-react';
 import { useTaskStore } from '../../stores/taskStore';
 import { PriorityDropdown } from '../PriorityDropdown/PriorityDropdown';
+import { Task } from '../../types/task';
 import './TaskItem.less';
 
 interface TaskItemProps {
@@ -14,6 +15,8 @@ interface TaskItemProps {
 export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash }) => {
   const [showPriorityDropdown, setShowPriorityDropdown] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(task.title);
   const { updateTask, deleteTask, toggleComplete } = useTaskStore();
 
   const handlePriorityClick = (e: React.MouseEvent) => {
@@ -26,7 +29,29 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash }) => {
     setShowPriorityDropdown(!showPriorityDropdown);
   };
 
-  // 添加点击外部关闭下拉菜单
+  const handleDoubleClick = () => {
+    if (isInTrash) return;
+    setIsEditing(true);
+    setEditTitle(task.title);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && editTitle.trim()) {
+      updateTask(task.id, { title: editTitle.trim() });
+      setIsEditing(false);
+    } else if (e.key === 'Escape') {
+      setIsEditing(false);
+      setEditTitle(task.title);
+    }
+  };
+
+  const handleBlur = () => {
+    if (editTitle.trim() && editTitle !== task.title) {
+      updateTask(task.id, { title: editTitle.trim() });
+    }
+    setIsEditing(false);
+  };
+
   useEffect(() => {
     if (!showPriorityDropdown) return;
 
@@ -39,7 +64,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash }) => {
   }, [showPriorityDropdown]);
 
   return (
-    <div className="task-item">
+    <div className={`task-item ${task.completed ? 'completed' : ''}`}>
       <div className="task-content">
         <div className="task-header">
           <div className="priority-wrapper">
@@ -63,7 +88,21 @@ export const TaskItem: React.FC<TaskItemProps> = ({ task, isInTrash }) => {
               document.body
             )}
           </div>
-          <span className="title">{task.title}</span>
+          <div className="title-wrapper" onDoubleClick={handleDoubleClick}>
+            {isEditing ? (
+              <input
+                type="text"
+                value={editTitle}
+                onChange={(e) => setEditTitle(e.target.value)}
+                onKeyDown={handleKeyPress}
+                onBlur={handleBlur}
+                autoFocus
+                className="title-input"
+              />
+            ) : (
+              <span className="title">{task.title}</span>
+            )}
+          </div>
         </div>
         <div className="task-meta">
           创建于 {format(new Date(task.createdAt), 'yyyy-MM-dd HH:mm')}
