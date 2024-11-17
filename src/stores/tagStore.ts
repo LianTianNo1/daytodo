@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Tag } from '../types/task';
+import { storage } from '../services/storage';
+import { Tag } from '../types/tag';
 
 interface TagState {
   tags: Tag[];
@@ -11,6 +12,32 @@ interface TagState {
   toggleSelectedTag: (tagId: string) => void;
   clearSelectedTags: () => void;
 }
+
+// 修改自定义持久化配置
+const customStorage = {
+  getItem: async (name: string): Promise<string | null> => {
+    try {
+      return await storage.get(name);
+    } catch (error) {
+      console.error('Error getting item:', error);
+      return null;
+    }
+  },
+  setItem: async (name: string, value: string): Promise<void> => {
+    try {
+      await storage.set(name, value);
+    } catch (error) {
+      console.error('Error setting item:', error);
+    }
+  },
+  removeItem: async (name: string): Promise<void> => {
+    try {
+      await storage.remove(name);
+    } catch (error) {
+      console.error('Error removing item:', error);
+    }
+  },
+};
 
 export const useTagStore = create<TagState>()(
   persist(
@@ -40,35 +67,17 @@ export const useTagStore = create<TagState>()(
       clearSelectedTags: () => set({ selectedTags: [] })
     }),
     {
-      name: 'tag-storage',
-      storage: {
-        getItem: async (name) => {
-          // 优先使用 Tauri 存储
-          try {
-            const { invoke } = await import('@tauri-apps/api');
-            const data = await invoke('get_storage', { key: name });
-            return data as string;
-          } catch {
-            // 降级到 localStorage
-            return localStorage.getItem(name);
-          }
-        },
-        setItem: async (name, value) => {
-          try {
-            const { invoke } = await import('@tauri-apps/api');
-            await invoke('set_storage', { key: name, value });
-          } catch {
-            localStorage.setItem(name, value);
-          }
-        },
-        removeItem: async (name) => {
-          try {
-            const { invoke } = await import('@tauri-apps/api');
-            await invoke('remove_storage', { key: name });
-          } catch {
-            localStorage.removeItem(name);
-          }
-        },
+      name: 'tags-storage',
+      storage: customStorage,
+      serialize: (state) => JSON.stringify(state),
+      deserialize: (str) => {
+        if (!str) return {};
+        try {
+          return JSON.parse(str);
+        } catch (e) {
+          console.error('Error parsing state:', e);
+          return {};
+        }
       },
     }
   )

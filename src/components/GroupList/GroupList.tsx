@@ -47,6 +47,7 @@ export const GroupList: React.FC = () => {
 
   return (
     <div className="group-list">
+      <TagManager />
       <div className="group-list-header">
         <span className="title">分组列表</span>
         <button onClick={handleAddGroup} className="add-group-btn">
@@ -106,7 +107,6 @@ export const GroupList: React.FC = () => {
         ))}
 
       </div>
-      <TagManager />
     </div>
   );
 };
