@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "daytodo",
+  "productName": "小浪Todo",
   "version": "0.1.0",
   "identifier": "com.xiaolang.daytodo.app",
   "build": {
@@ -12,9 +12,12 @@
   "app": {
     "windows": [
       {
-        "title": "daytodo",
-        "width": 800,
-        "height": 600
+        "title": "小浪Todo",
+        "width": 900,
+        "height": 600,
+        "resizable": true,
+        "decorations": true,
+        "acceptFirstMouse": true
       }
     ],
     "security": {

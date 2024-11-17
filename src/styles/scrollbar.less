@@ -1,0 +1,48 @@
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+
+// 当滚动条在悬浮状态时显示
+.task-items, .todo-list, body, .app-container, #root {
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+// Firefox 滚动条样式
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
+}

@@ -5,7 +5,7 @@
   z-index: 1;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   padding: 16px 20px;
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
@@ -36,7 +36,7 @@
 
   .task-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 12px;
     margin-bottom: 8px;
   }
@@ -115,28 +115,27 @@
 
   .title-wrapper {
     flex: 1;
-  }
+    min-height: 24px;
 
-  .title {
-    font-weight: 500;
-    color: @heading-color;
-    font-size: 15px;
-  }
+    .title {
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.5;
+    }
 
-  .title-input {
-    width: 100%;
-    border: none;
-    outline: none;
-    background: transparent;
-    font-size: 15px;
-    font-weight: 500;
-    padding: 4px 8px;
-    border-radius: @border-radius-base;
-    border: 1px solid @border-color;
-
-    &:focus {
-      border-color: @primary-color;
-      box-shadow: 0 0 0 2px fade(@primary-color, 20%);
+    .title-input {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-size: inherit;
+      font-family: inherit;
+      padding: 0;
+      margin: 0;
+      resize: none;
+      overflow: hidden;
+      line-height: 1.5;
+      min-height: 24px;
     }
   }
 
@@ -177,10 +176,48 @@
           color: white;
         }
       }
+
+      &.edit {
+        color: @primary-color;
+        &:hover {
+          background: fade(@primary-color, 15%);
+        }
+      }
     }
   }
 
   &:hover .task-actions {
     opacity: 1;
+  }
+
+  .drag-handle {
+    cursor: grab;
+    color: @text-color-secondary;
+    padding: 4px;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+    touch-action: none;
+
+    &:hover {
+      color: @text-color;
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  &:hover .drag-handle {
+    opacity: 1;
+  }
+
+  &.dragging {
+    cursor: grabbing;
+    opacity: 0.4;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
 }

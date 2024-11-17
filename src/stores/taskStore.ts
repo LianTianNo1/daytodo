@@ -13,6 +13,7 @@ interface TaskState {
   emptyTrash: () => void;
   toggleComplete: (id: string) => void;
   setCurrentGroupId: (groupId: string) => void;
+  reorderTasks: (dragIndex: number, hoverIndex: number, sourceGroupId: string, targetGroupId: string) => void;
 }
 
 export const useTaskStore = create<TaskState>((set) => ({
@@ -59,4 +60,32 @@ export const useTaskStore = create<TaskState>((set) => ({
     )
   })),
   setCurrentGroupId: (groupId) => set({ currentGroupId: groupId }),
+  reorderTasks: (dragIndex: number, hoverIndex: number, sourceGroupId: string, targetGroupId: string) =>
+    set((state) => {
+      const allTasks = [...state.tasks];
+
+      const sourceGroupTasks = allTasks.filter(task => task.groupId === sourceGroupId);
+      const targetGroupTasks = allTasks.filter(task => task.groupId === targetGroupId);
+
+      const [taskToMove] = sourceGroupTasks.splice(dragIndex, 1);
+
+      if (sourceGroupId !== targetGroupId) {
+        taskToMove.groupId = targetGroupId;
+        targetGroupTasks.splice(hoverIndex, 0, taskToMove);
+      } else {
+        sourceGroupTasks.splice(hoverIndex, 0, taskToMove);
+      }
+
+      const otherTasks = allTasks.filter(task =>
+        task.groupId !== sourceGroupId && task.groupId !== targetGroupId
+      );
+
+      const updatedTasks = [
+        ...otherTasks,
+        ...(sourceGroupId === targetGroupId ? sourceGroupTasks : []),
+        ...(sourceGroupId !== targetGroupId ? [...sourceGroupTasks, ...targetGroupTasks] : [])
+      ];
+
+      return { tasks: updatedTasks };
+    }),
 }));
