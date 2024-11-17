@@ -2,8 +2,14 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "Capability for the main window",
-  "windows": ["main"],
-  "platforms": ["linux", "macOS", "windows"],
+  "windows": [
+    "main"
+  ],
+  "platforms": [
+    "linux",
+    "macOS",
+    "windows"
+  ],
   "permissions": [
     "core:default",
     "shell:allow-open",
@@ -17,6 +23,7 @@
     "core:window:allow-set-title",
     "sql:allow-execute",
     "sql:allow-load",
-    "sql:default"
+    "sql:default",
+    "notification:default"
   ]
 }

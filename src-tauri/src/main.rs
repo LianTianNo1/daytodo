@@ -6,8 +6,7 @@ use tauri::Manager;
 
 #[tauri::command]
 async fn get_storage(app: tauri::AppHandle, key: String) -> Result<String, String> {
-    let app_dir = app.path().app_data_dir()
-        .map_err(|e| e.to_string())?;
+    let app_dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
     let file_path = app_dir.join(format!("{}.json", key));
 
     if !file_path.exists() {
@@ -19,8 +18,7 @@ async fn get_storage(app: tauri::AppHandle, key: String) -> Result<String, Strin
 
 #[tauri::command]
 async fn set_storage(app: tauri::AppHandle, key: String, value: String) -> Result<(), String> {
-    let app_dir = app.path().app_data_dir()
-        .map_err(|e| e.to_string())?;
+    let app_dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
     fs::create_dir_all(&app_dir).map_err(|e| e.to_string())?;
 
     let file_path = app_dir.join(format!("{}.json", key));
@@ -29,8 +27,7 @@ async fn set_storage(app: tauri::AppHandle, key: String, value: String) -> Resul
 
 #[tauri::command]
 async fn remove_storage(app: tauri::AppHandle, key: String) -> Result<(), String> {
-    let app_dir = app.path().app_data_dir()
-        .map_err(|e| e.to_string())?;
+    let app_dir = app.path().app_data_dir().map_err(|e| e.to_string())?;
     let file_path = app_dir.join(format!("{}.json", key));
 
     if file_path.exists() {
@@ -42,6 +39,7 @@ async fn remove_storage(app: tauri::AppHandle, key: String) -> Result<(), String
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_sql::Builder::default().build())
         .invoke_handler(tauri::generate_handler![
             get_storage,

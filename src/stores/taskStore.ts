@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { storage } from '../services/storage';
 import { Task } from '../types/task';
+import { useNotification } from '../hooks/useNotification';
 
 interface TaskState {
   tasks: Task[];
@@ -33,6 +34,7 @@ interface TaskState {
   setOverdueFilter: (showOverdue: boolean) => void;
   getTasksByGroupId: (groupId: string) => Task[];
   moveTasksToDefaultGroup: (groupId: string) => void;
+  checkTasksDue: () => void;
 }
 
 // 修改自定义持久化配置
@@ -73,14 +75,27 @@ export const useTaskStore = create<TaskState>()(
         priorities: [],
         showOverdue: false,
       },
-      addTask: (task) => set((state) => ({
-        tasks: [...state.tasks, {
-          ...task,
-          id: crypto.randomUUID(),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }]
-      })),
+      addTask: (task) => {
+        const { notify } = useNotification();
+        set((state) => {
+          const newTask = {
+            ...task,
+            id: crypto.randomUUID(),
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+
+          // 如果是高优先级任务(P0/P1)，发送通知
+          if (task.priority === 'P0' || task.priority === 'P1') {
+            notify({
+              title: '新建高优先级任务',
+              body: `新建了一个${task.priority}优先级任务: ${task.title}`,
+            });
+          }
+
+          return { tasks: [...state.tasks, newTask] };
+        });
+      },
       updateTask: (id, updatedTask) => set((state) => ({
         tasks: state.tasks.map(task =>
           task.id === id
@@ -92,15 +107,27 @@ export const useTaskStore = create<TaskState>()(
             : task
         )
       })),
-      deleteTask: (id) => set((state) => {
-        const taskToDelete = state.tasks.find(task => task.id === id);
-        if (!taskToDelete) return state;
+      deleteTask: (id) => {
+        const { notify } = useNotification();
+        set((state) => {
+          const taskToDelete = state.tasks.find(task => task.id === id);
+          if (!taskToDelete) return state;
 
-        return {
-          tasks: state.tasks.filter(task => task.id !== id),
-          trashedTasks: [...state.trashedTasks, taskToDelete]
-        };
-      }),
+          // 如果是高优先级任务被删除，发送通知
+          if (taskToDelete.priority === 'P0' || taskToDelete.priority === 'P1') {
+            notify({
+              title: '高优先级任务已移至回收站',
+              body: `任务"${taskToDelete.title}"已被移至回收站`,
+              // icon: 'icon.png',
+            });
+          }
+
+          return {
+            tasks: state.tasks.filter(task => task.id !== id),
+            trashedTasks: [...state.trashedTasks, taskToDelete]
+          };
+        });
+      },
       restoreTask: (id) => set((state) => {
         const taskToRestore = state.trashedTasks.find(task => task.id === id);
         if (!taskToRestore) return state;
@@ -114,11 +141,28 @@ export const useTaskStore = create<TaskState>()(
         trashedTasks: state.trashedTasks.filter(task => task.id !== id)
       })),
       emptyTrash: () => set((state) => ({ trashedTasks: [] })),
-      toggleComplete: (id) => set((state) => ({
-        tasks: state.tasks.map(task =>
-          task.id === id ? { ...task, completed: !task.completed } : task
-        )
-      })),
+      toggleComplete: async (id: string) => {
+        const { notify } = useNotification();
+        const task = get().tasks.find(t => t.id === id);
+
+        if (task) {
+          set((state) => ({
+            tasks: state.tasks.map((t) =>
+              t.id === id ? { ...t, completed: !t.completed } : t
+            ),
+          }));
+
+          // 任务完成时发送通知
+          if (!task.completed) {
+            await notify({
+              title: '任务完成',
+              body: `恭喜！任务"${task.title}"已完成`,
+              // icon: 'icon.png',
+              sound: 'default',
+            });
+          }
+        }
+      },
       setCurrentGroupId: (groupId) => set({ currentGroupId: groupId }),
       reorderTasks: (dragIndex: number, hoverIndex: number, sourceGroupId: string, targetGroupId: string) =>
         set((state) => {
@@ -249,6 +293,21 @@ export const useTaskStore = create<TaskState>()(
               : task
           )
         }));
+      },
+      checkTasksDue: async () => {
+        const { notifyTaskDue } = useNotification();
+        const tasks = get().tasks;
+        const now = new Date();
+
+        tasks.forEach(task => {
+          if (
+            task.dueDate &&
+            !task.completed &&
+            new Date(task.dueDate).getTime() - now.getTime() <= 1000 * 60 * 60 // 1小时内到期
+          ) {
+            notifyTaskDue(task.title);
+          }
+        });
       },
     }),
     {
