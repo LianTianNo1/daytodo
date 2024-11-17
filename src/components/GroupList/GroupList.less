@@ -1,4 +1,4 @@
-@import '../../styles/variables.less';
+@import "../../styles/variables.less";
 
 .group-list {
   width: 200px;
@@ -50,6 +50,8 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    height: 500px;
+    overflow-y: auto;
   }
 
   .group-item {
@@ -60,7 +62,7 @@
     cursor: pointer;
     .transition-base();
     position: relative;
-    overflow: hidden;
+    margin: 4px 0;
 
     &:hover {
       background: fade(@primary-color, 5%);
@@ -70,7 +72,7 @@
       background: fade(@primary-color, 8%);
 
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         left: 0;
         top: 0;

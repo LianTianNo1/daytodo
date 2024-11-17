@@ -17,7 +17,7 @@ export const GroupList: React.FC = () => {
   const handleAddGroup = () => {
     const newGroup = {
       name: '新分组',
-      color: '#' + Math.floor(Math.random()*16777215).toString(16)
+      color: '#' + Math.floor(Math.random() * 16777215).toString(16)
     };
     addGroup(newGroup);
   };
@@ -63,6 +63,18 @@ export const GroupList: React.FC = () => {
           <div className="group-color all" />
           <span className="group-name">全部任务</span>
         </div>
+        <div
+          className={`group-item trash ${currentGroupId === 'trash' ? 'active' : ''}`}
+          onClick={() => handleGroupClick('trash')}
+        >
+          <div className="group-color trash">
+            <Trash2 size={12} />
+          </div>
+          <span className="group-name">垃圾桶</span>
+          {trashedTasks.length > 0 && (
+            <span className="trash-count">{trashedTasks.length}</span>
+          )}
+        </div>
 
         {groups.map(group => (
           <div
@@ -93,18 +105,6 @@ export const GroupList: React.FC = () => {
           </div>
         ))}
 
-        <div
-          className={`group-item trash ${currentGroupId === 'trash' ? 'active' : ''}`}
-          onClick={() => handleGroupClick('trash')}
-        >
-          <div className="group-color trash">
-            <Trash2 size={12} />
-          </div>
-          <span className="group-name">垃圾桶</span>
-          {trashedTasks.length > 0 && (
-            <span className="trash-count">{trashedTasks.length}</span>
-          )}
-        </div>
       </div>
       <TagManager />
     </div>
