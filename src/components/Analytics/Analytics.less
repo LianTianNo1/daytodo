@@ -1,0 +1,69 @@
+@import '../../styles/variables.less';
+
+.analytics-container {
+  padding: 24px;
+  background: @background-color;
+  min-height: 100%;
+  overflow-y: auto;
+  width: 100%;
+
+  .stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    h3 {
+      margin-bottom: 16px;
+      color: @text-color;
+      font-weight: 500;
+    }
+  }
+
+  .completion-rate {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+
+    .rate-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, @primary-color, lighten(@primary-color, 20%));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+      .rate-number {
+        color: white;
+        font-size: 24px;
+        font-weight: bold;
+      }
+    }
+
+    .rate-detail {
+      p {
+        margin: 8px 0;
+        color: @text-color-secondary;
+      }
+    }
+  }
+
+  .chart-container {
+    height: 300px;
+    margin-top: 16px;
+  }
+
+  .trend-card, .tag-stats-card {
+    margin-bottom: 24px;
+
+    h3 {
+      margin-bottom: 16px;
+      color: @text-color;
+      font-weight: 500;
+    }
+  }
+}
